@@ -7,18 +7,18 @@ import androidx.lifecycle.ViewModel
 import com.example.samplemvvm.repository.LogInRepository
 import com.google.firebase.auth.FirebaseUser
 
-class LogInViewModel: ViewModel{
-      var mCurrentUser:MutableLiveData<FirebaseUser?>
-      var logInRepository: LogInRepository
+class LogInViewModel : ViewModel {
+    var mCurrentUser: MutableLiveData<FirebaseUser?>
+    var logInRepository: LogInRepository
 
-    constructor()
-    {
-        logInRepository= LogInRepository()
-        mCurrentUser= logInRepository.getUser()
+    constructor() {
+        logInRepository = LogInRepository()
+        mCurrentUser = logInRepository.getUser()
     }
-    fun logIn(email:String, password:String, context: Context) {
-        if(email!=null && email!="" && password!=null && password!="" )
-        logInRepository.logInWithEmail(email,password, context)
+
+    fun logIn(email: String, password: String, context: Context) {
+        if (email != null && email != "" && password != null && password != "")
+            logInRepository.logInWithEmail(email, password, context)
         else
             Toast.makeText(
                 context, "Log Out Failed.",
@@ -26,11 +26,9 @@ class LogInViewModel: ViewModel{
             ).show()
     }
 
-    fun logOut(){
+    fun logOut() {
         logInRepository.logOut()
     }
-
-  //  fun getUser():FirebaseUser? = logInRepository.getUser()
 
 
 

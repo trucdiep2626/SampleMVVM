@@ -7,7 +7,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
-import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,14 +15,13 @@ import com.example.samplemvvm.R
 import com.example.samplemvvm.viewModel.LogInViewModel
 import com.example.samplemvvm.databinding.ActivityHomeBinding
 import com.example.samplemvvm.model.Country
-import com.example.samplemvvm.model.CountryAdapter
 import com.example.samplemvvm.viewModel.CountryViewModel
 
 class HomeActivity : AppCompatActivity() {
     lateinit var binding: ActivityHomeBinding
     lateinit var logInViewModel: LogInViewModel
     lateinit var countryViewModel: CountryViewModel
-    lateinit var adapter:CountryAdapter
+    lateinit var adapter: CountryAdapter
     lateinit var countries: MutableList<Country>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,15 +39,14 @@ class HomeActivity : AppCompatActivity() {
             LinearLayoutManager(this)
         binding.rvCountriesList.layoutManager = linearLayoutManager
         countries = mutableListOf()
-         adapter= CountryAdapter(countries,this)
-      binding.rvCountriesList.adapter=adapter
+        adapter = CountryAdapter(countries, this)
+        binding.rvCountriesList.adapter = adapter
         countryViewModel.fetchData()
-        countryViewModel.getCountries().observe (this,Observer<MutableList<Country>> {
+        countryViewModel.getCountries().observe(this, Observer<MutableList<Country>> {
             if (it != null) {
                 onSuccessful(it)
                 println("get data successful")
-            }
-            else{
+            } else {
                 onError()
             }
         })
@@ -61,7 +58,6 @@ class HomeActivity : AppCompatActivity() {
 
         logInViewModel.mCurrentUser.observe(this, Observer {
             if (it == null) {
-                //   binding.frameLayoutProgress.visibility = View.VISIBLE
                 startActivity(Intent(this, LogInActivity::class.java))
                 finish()
             }
@@ -70,10 +66,9 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    private fun setListener(){
+    private fun setListener() {
         binding.btnLogout.setOnClickListener {
             logInViewModel.logOut()
-         //   startActivity(Intent(this, LogInActivity::class.java))
         }
 
         binding.edtSearch.addTextChangedListener(object : TextWatcher {
@@ -103,26 +98,27 @@ class HomeActivity : AppCompatActivity() {
         })
 
     }
+
     fun onSuccessful(result: MutableList<Country>) {
         binding.rvCountriesList.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
         binding.edtSearch.isEnabled = true
 
-         countries = result
+        countries = result
 //        countries.forEach {
 //            println(it.name)
 //        }
-      //  adapter= CountryAdapter(countries,this)
+        //  adapter= CountryAdapter(countries,this)
         adapter.updateCountries(countries)
-        binding.rvCountriesList.adapter=adapter
+        binding.rvCountriesList.adapter = adapter
         println(adapter.itemCount)
     }
 
     fun onError() {
-        binding.rvCountriesList.visibility  = View.GONE
-        binding.progressBar.visibility  = View.GONE
-        binding.edtSearch.isEnabled= false
-        binding.tvNoData.visibility=View.VISIBLE
+        binding.rvCountriesList.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.edtSearch.isEnabled = false
+        binding.tvNoData.visibility = View.VISIBLE
 
         Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
     }

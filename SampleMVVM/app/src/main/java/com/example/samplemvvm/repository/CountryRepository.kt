@@ -16,7 +16,7 @@ class CountryRepository: ICountryRepository {
 
     }
 
-    fun fetchData():MutableLiveData<MutableList<Country>>{
+    override fun fetchData():MutableLiveData<MutableList<Country>>{
         service= CountriesService.create().getCountries()
         service.enqueue(object :Callback<MutableList<Country>> {
             override fun onResponse(

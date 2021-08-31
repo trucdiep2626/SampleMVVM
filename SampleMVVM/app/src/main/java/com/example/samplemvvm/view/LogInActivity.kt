@@ -31,14 +31,12 @@ class LogInActivity : AppCompatActivity() {
         logInViewModel.mCurrentUser.observe(this, Observer {
             if (it != null) {
                 binding.progressBar.visibility = View.VISIBLE
-                binding.btnLogIn.visibility=View.GONE
+                binding.btnLogIn.visibility = View.GONE
                 startActivity(Intent(this, HomeActivity::class.java))
                 finish()
-            }
-            else
-            {
-                  binding.progressBar.visibility = View.GONE
-                   binding.btnLogIn.visibility=View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+                binding.btnLogIn.visibility = View.VISIBLE
             }
         })
     }
@@ -48,7 +46,7 @@ class LogInActivity : AppCompatActivity() {
             val username: String = binding.edtEmail.text.toString().trim()
             val password: String = binding.edtPassword.text.toString().trim()
             binding.progressBar.visibility = View.VISIBLE
-            binding.btnLogIn.visibility=View.GONE
+            binding.btnLogIn.visibility = View.GONE
             logInViewModel.logIn(username, password, this)
         }
     }

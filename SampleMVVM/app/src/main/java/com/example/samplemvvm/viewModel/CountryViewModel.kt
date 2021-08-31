@@ -6,7 +6,7 @@ import com.example.samplemvvm.model.Country
 import com.example.samplemvvm.repository.CountryRepository
 
 class CountryViewModel : ViewModel() {
-      private var mCountries:MutableLiveData<MutableList<Country>>
+    private var mCountries: MutableLiveData<MutableList<Country>>
     private var countryRepository: CountryRepository
 
     init {
@@ -14,8 +14,8 @@ class CountryViewModel : ViewModel() {
         countryRepository = CountryRepository()
     }
 
-    fun fetchData(){
-        mCountries=  countryRepository.fetchData()
+    fun fetchData() {
+        mCountries = countryRepository.fetchData()
     }
 
     fun getCountries() = mCountries
