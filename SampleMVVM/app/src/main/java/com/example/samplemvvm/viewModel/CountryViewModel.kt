@@ -9,10 +9,6 @@ class CountryViewModel : ViewModel() {
     private var mCountries: MutableLiveData<MutableList<Country>> = MutableLiveData()
     private var countryRepository: CountryRepository = CountryRepository()
 
-//    init {
-//        mCountries
-//        countryRepository
-//    }
 
     fun fetchData() {
         mCountries = countryRepository.fetchData()
