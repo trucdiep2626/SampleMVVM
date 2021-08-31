@@ -1,26 +1,25 @@
 package com.example.samplemvvm.view
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.samplemvvm.R
-import com.example.samplemvvm.viewModel.LogInViewModel
 import com.example.samplemvvm.databinding.ActivityHomeBinding
 import com.example.samplemvvm.model.Country
 import com.example.samplemvvm.viewModel.CountryViewModel
+import com.example.samplemvvm.viewModel.LogInViewModel
 
 class HomeActivity : AppCompatActivity() {
-    lateinit var binding: ActivityHomeBinding
-    lateinit var logInViewModel: LogInViewModel
-    lateinit var countryViewModel: CountryViewModel
+    private lateinit var binding: ActivityHomeBinding
+    private lateinit var logInViewModel: LogInViewModel
+    private lateinit var countryViewModel: CountryViewModel
     lateinit var adapter: CountryAdapter
     lateinit var countries: MutableList<Country>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,10 +38,10 @@ class HomeActivity : AppCompatActivity() {
             LinearLayoutManager(this)
         binding.rvCountriesList.layoutManager = linearLayoutManager
         countries = mutableListOf()
-        adapter = CountryAdapter(countries, this)
+        adapter = CountryAdapter(countries)
         binding.rvCountriesList.adapter = adapter
         countryViewModel.fetchData()
-        countryViewModel.getCountries().observe(this, Observer<MutableList<Country>> {
+        countryViewModel.getCountries().observe(this, {
             if (it != null) {
                 onSuccessful(it)
                 println("get data successful")
@@ -56,7 +55,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun authentication() {
 
-        logInViewModel.mCurrentUser.observe(this, Observer {
+        logInViewModel.mCurrentUser.observe(this, {
             if (it == null) {
                 startActivity(Intent(this, LogInActivity::class.java))
                 finish()
@@ -75,12 +74,12 @@ class HomeActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {
                 if (s.isNotEmpty()) {
-                    val filterCountries = countries?.filter { country ->
+                    val filterCountries = countries.filter { country ->
                         country.name.contains(s.toString(), true)
                     }
-                    filterCountries?.let { adapter.updateCountries(it as MutableList<Country>) }
+                    filterCountries.let { adapter.updateCountries(it as MutableList<Country>) }
                 } else {
-                    countries?.let { adapter.updateCountries(it) }
+                    countries.let { adapter.updateCountries(it) }
                 }
             }
 
@@ -99,22 +98,18 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    fun onSuccessful(result: MutableList<Country>) {
+    private fun onSuccessful(result: MutableList<Country>) {
         binding.rvCountriesList.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
         binding.edtSearch.isEnabled = true
 
         countries = result
-//        countries.forEach {
-//            println(it.name)
-//        }
-        //  adapter= CountryAdapter(countries,this)
         adapter.updateCountries(countries)
         binding.rvCountriesList.adapter = adapter
         println(adapter.itemCount)
     }
 
-    fun onError() {
+    private fun onError() {
         binding.rvCountriesList.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.edtSearch.isEnabled = false

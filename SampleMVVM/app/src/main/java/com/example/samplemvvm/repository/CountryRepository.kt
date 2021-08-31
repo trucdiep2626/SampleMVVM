@@ -7,14 +7,9 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Callback
 
-class CountryRepository: ICountryRepository {
-    lateinit var service: Call<MutableList<Country>>
-    var mCountries :MutableLiveData<MutableList<Country>>
-
-    constructor( ) {
-        mCountries= MutableLiveData()
-
-    }
+class CountryRepository : ICountryRepository {
+    private lateinit var service: Call<MutableList<Country>>
+    var mCountries :MutableLiveData<MutableList<Country>> = MutableLiveData()
 
     override fun fetchData():MutableLiveData<MutableList<Country>>{
         service= CountriesService.create().getCountries()

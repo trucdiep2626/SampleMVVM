@@ -1,17 +1,14 @@
 package com.example.samplemvvm.view
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.samplemvvm.R
-
-import com.example.samplemvvm.viewModel.LogInViewModel
 import com.example.samplemvvm.databinding.ActivityLogInBinding
-import com.google.firebase.auth.FirebaseAuth
+import com.example.samplemvvm.viewModel.LogInViewModel
 
 class LogInActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLogInBinding
@@ -28,7 +25,7 @@ class LogInActivity : AppCompatActivity() {
     }
 
     private fun authentication() {
-        logInViewModel.mCurrentUser.observe(this, Observer {
+        logInViewModel.mCurrentUser.observe(this, {
             if (it != null) {
                 binding.progressBar.visibility = View.VISIBLE
                 binding.btnLogIn.visibility = View.GONE
