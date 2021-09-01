@@ -10,36 +10,46 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.samplemvvm.CountryApplication
 import com.example.samplemvvm.R
 import com.example.samplemvvm.databinding.ActivityHomeBinding
 import com.example.samplemvvm.model.Country
 import com.example.samplemvvm.viewModel.CountryViewModel
 import com.example.samplemvvm.viewModel.LogInViewModel
+import javax.inject.Inject
 
 class HomeActivity : AppCompatActivity() {
+    @Inject
+    lateinit var logInViewModel: LogInViewModel
+    @Inject
+    lateinit var countryViewModel: CountryViewModel
+
     private lateinit var binding: ActivityHomeBinding
-    private lateinit var logInViewModel: LogInViewModel
-    private lateinit var countryViewModel: CountryViewModel
     lateinit var adapter: CountryAdapter
     lateinit var countries: MutableList<Country>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         binding = DataBindingUtil.setContentView(
             this, R.layout.activity_home
         )
-        logInViewModel = ViewModelProvider(this)[LogInViewModel::class.java]
-        countryViewModel = ViewModelProvider(this)[CountryViewModel::class.java]
 
+        val appComponent = (application as CountryApplication).appComponent
+        appComponent.inject(this)
         authentication()
         setListener()
 
-        val linearLayoutManager =
-            LinearLayoutManager(this)
+        binding.rvCountriesList.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+
+        val linearLayoutManager = LinearLayoutManager(this)
         binding.rvCountriesList.layoutManager = linearLayoutManager
+
         countries = mutableListOf()
         adapter = CountryAdapter(countries)
         binding.rvCountriesList.adapter = adapter
+
         countryViewModel.fetchData()
         countryViewModel.getCountries().observe(this, {
             if (it != null) {

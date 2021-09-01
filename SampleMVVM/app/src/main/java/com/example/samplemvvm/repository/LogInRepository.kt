@@ -5,9 +5,10 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import javax.inject.Inject
 
-class LogInRepository : ILogInRepository {
-    private var _fireBaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+class LogInRepository @Inject constructor(val _fireBaseAuth: FirebaseAuth) : ILogInRepository {
     private var _mCurrentUser: MutableLiveData<FirebaseUser?> = MutableLiveData()
 
     override fun logInWithEmail(email: String, password: String, context: Context) {
@@ -19,7 +20,7 @@ class LogInRepository : ILogInRepository {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                _mCurrentUser.value=null
+                _mCurrentUser.value = null
                 Toast.makeText(
                     context, "Log In Failed.",
                     Toast.LENGTH_SHORT
@@ -30,9 +31,9 @@ class LogInRepository : ILogInRepository {
 
     override fun logOut() {
         _fireBaseAuth.signOut()
-        _mCurrentUser.value=null
+        _mCurrentUser.value = null
     }
 
-    override fun getUser():MutableLiveData<FirebaseUser?> = _mCurrentUser
+    override fun getUser(): MutableLiveData<FirebaseUser?> = _mCurrentUser
 
 }

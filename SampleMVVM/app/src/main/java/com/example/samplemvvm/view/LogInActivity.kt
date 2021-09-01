@@ -6,20 +6,26 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.example.samplemvvm.CountryApplication
 import com.example.samplemvvm.R
 import com.example.samplemvvm.databinding.ActivityLogInBinding
 import com.example.samplemvvm.viewModel.LogInViewModel
+import javax.inject.Inject
 
 class LogInActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLogInBinding
-    private lateinit var logInViewModel: LogInViewModel
+
+    @Inject
+    lateinit var logInViewModel: LogInViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log_in)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_log_in)
 
-        logInViewModel = ViewModelProvider(this)[LogInViewModel::class.java]
+        val authComponent = (application as CountryApplication).appComponent
+        authComponent.inject(this)
+
         authentication()
         setListener()
     }

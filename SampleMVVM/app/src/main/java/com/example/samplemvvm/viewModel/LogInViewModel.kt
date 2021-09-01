@@ -6,10 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.samplemvvm.repository.LogInRepository
 import com.google.firebase.auth.FirebaseUser
+import javax.inject.Inject
 
-class LogInViewModel : ViewModel() {
+class LogInViewModel @Inject constructor (var logInRepository: LogInRepository) {
     var mCurrentUser: MutableLiveData<FirebaseUser?>
-    var logInRepository: LogInRepository = LogInRepository()
+
 
     init {
         mCurrentUser = logInRepository.getUser()
