@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class HomeActivity : AppCompatActivity() {
     @Inject
     lateinit var logInViewModel: LogInViewModel
+
     @Inject
     lateinit var countryViewModel: CountryViewModel
 
@@ -37,8 +39,7 @@ class HomeActivity : AppCompatActivity() {
 
         val appComponent = (application as CountryApplication).appComponent
         appComponent.inject(this)
-        authentication()
-        setListener()
+
 
         binding.rvCountriesList.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
@@ -49,12 +50,14 @@ class HomeActivity : AppCompatActivity() {
         countries = mutableListOf()
         adapter = CountryAdapter(countries)
         binding.rvCountriesList.adapter = adapter
+        authentication()
+        setListener()
 
         countryViewModel.fetchData()
         countryViewModel.getCountries().observe(this, {
             if (it != null) {
+                println("get data")
                 onSuccessful(it)
-                println("get data successful")
             } else {
                 onError()
             }
@@ -80,31 +83,7 @@ class HomeActivity : AppCompatActivity() {
             logInViewModel.logOut()
         }
 
-        binding.edtSearch.addTextChangedListener(object : TextWatcher {
-
-            override fun afterTextChanged(s: Editable) {
-                if (s.isNotEmpty()) {
-                    val filterCountries = countries.filter { country ->
-                        country.name.contains(s.toString(), true)
-                    }
-                    filterCountries.let { adapter.updateCountries(it as MutableList<Country>) }
-                } else {
-                    countries.let { adapter.updateCountries(it) }
-                }
-            }
-
-            override fun beforeTextChanged(
-                s: CharSequence, start: Int,
-                count: Int, after: Int
-            ) {
-            }
-
-            override fun onTextChanged(
-                s: CharSequence, start: Int,
-                before: Int, count: Int
-            ) {
-            }
-        })
+        binding.edtSearch.addTextChangedListener(countryViewModel.search(adapter))
 
     }
 
@@ -116,7 +95,6 @@ class HomeActivity : AppCompatActivity() {
         countries = result
         adapter.updateCountries(countries)
         binding.rvCountriesList.adapter = adapter
-        println(adapter.itemCount)
     }
 
     private fun onError() {
