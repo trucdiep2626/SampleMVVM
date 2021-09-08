@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="adapter"
+            type="com.example.samplemvvm.view.CountryAdapter" />
+        <variable
+            name="countryViewModel"
+            type="com.example.samplemvvm.viewModel.CountryViewModel" />
+        <variable
+            name="logInViewModel"
+            type="com.example.samplemvvm.viewModel.LogInViewModel" />
+    </data>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,7 +39,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/log_out" />
+                android:text="@string/log_out"
+                android:onClick="@{()->logInViewModel.logOut()}"/>
         </LinearLayout>
 
 
@@ -38,7 +51,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/search"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:addTextChangedListener="@{ countryViewModel.search(rvCountriesList)}"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,7 +65,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="16dp"
-                android:visibility="visible">
+
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:visibility="@{countryViewModel.isSuccess ?View.VISIBLE: View.GONE }">
 
             </androidx.recyclerview.widget.RecyclerView>
 
@@ -60,7 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="visible" />
+                android:visibility="@{countryViewModel.isLoading ? View.VISIBLE :View.GONE}" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -69,7 +86,7 @@
                 android:text="@string/no_data"
                 android:textSize="40sp"
                 android:id="@+id/tvNoData"
-                android:visibility="gone"
+                android:visibility="@{countryViewModel.isFailed ? View.VISIBLE :View.GONE}"
                 ></TextView>
         </LinearLayout>
 

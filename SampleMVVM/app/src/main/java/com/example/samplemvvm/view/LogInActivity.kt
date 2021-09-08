@@ -2,10 +2,8 @@ package com.example.samplemvvm.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.example.samplemvvm.CountryApplication
 import com.example.samplemvvm.R
 import com.example.samplemvvm.databinding.ActivityLogInBinding
@@ -27,30 +25,19 @@ class LogInActivity : AppCompatActivity() {
         authComponent.inject(this)
 
         authentication()
-        setListener()
+
+        binding.lifecycleOwner = this
+        binding.logInViewModel = logInViewModel
     }
 
     private fun authentication() {
         logInViewModel.mCurrentUser.observe(this, {
             if (it != null) {
-                binding.progressBar.visibility = View.VISIBLE
-                binding.btnLogIn.visibility = View.GONE
                 startActivity(Intent(this, HomeActivity::class.java))
                 finish()
-            } else {
-                binding.progressBar.visibility = View.GONE
-                binding.btnLogIn.visibility = View.VISIBLE
             }
         })
     }
 
-    private fun setListener() {
-        binding.btnLogIn.setOnClickListener {
-            val username: String = binding.edtEmail.text.toString().trim()
-            val password: String = binding.edtPassword.text.toString().trim()
-            binding.progressBar.visibility = View.VISIBLE
-            binding.btnLogIn.visibility = View.GONE
-            logInViewModel.logIn(username, password, this)
-        }
-    }
+
 }

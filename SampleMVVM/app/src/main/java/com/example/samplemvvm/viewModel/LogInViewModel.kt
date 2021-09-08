@@ -1,37 +1,50 @@
 package com.example.samplemvvm.viewModel
 
-import android.content.Context
-import android.widget.Toast
+import android.view.View
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.samplemvvm.repository.LogInRepository
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseUser
 import javax.inject.Inject
 
-class LogInViewModel @Inject constructor (var logInRepository: LogInRepository) {
+class LogInViewModel @Inject constructor(var logInRepository: LogInRepository) {
     var mCurrentUser: MutableLiveData<FirebaseUser?>
+    var isProcessing: MutableLiveData<Boolean> = MutableLiveData()
+    var email: MutableLiveData<String> = MutableLiveData()
+    var password: MutableLiveData<String> = MutableLiveData()
 
 
     init {
         mCurrentUser = logInRepository.getUser()
+        isProcessing.postValue(false)
     }
 
-    fun logIn(email: String, password: String, context: Context) {
-        if (email != null && email != "" && password != null && password != "")
-            logInRepository.logInWithEmail(email, password, context)
-        else {
-            mCurrentUser.value=null
-            Toast.makeText(
-                context, "Log In Failed.",
-                Toast.LENGTH_SHORT
-            ).show()
+    fun logIn(view: View) {
+        if (!email.value.isNullOrEmpty() && !password.value.isNullOrEmpty()) {
+            isProcessing.postValue(true)
+            logInRepository.logInWithEmail(email.value!!, password.value!!)
+            mCurrentUser = logInRepository.getUser()
+            if (mCurrentUser != null) {
+                isProcessing.postValue(false)
+                Snackbar.make(view, "Log In Success.", Snackbar.LENGTH_SHORT).show()
+            } else {
+                isProcessing.postValue(false)
+                Snackbar.make(view, "Log In Failed.", Snackbar.LENGTH_SHORT).show()
+            }
+        } else {
+            println("fail")
+            mCurrentUser.postValue(null)
+            Snackbar.make(view, "Log In Failed.", Snackbar.LENGTH_SHORT).show()
+
         }
     }
 
-    fun logOut() {
-        logInRepository.logOut()
-    }
 
+    fun logOut() {
+        println("log out")
+        logInRepository.logOut()
+        mCurrentUser = logInRepository.getUser()
+    }
 
 
 }

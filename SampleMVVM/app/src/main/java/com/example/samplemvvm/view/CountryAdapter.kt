@@ -1,12 +1,13 @@
 package com.example.samplemvvm.view
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.samplemvvm.R
+import com.example.samplemvvm.databinding.CountryItemBinding
 import com.example.samplemvvm.model.Country
+
 
 class CountryAdapter : RecyclerView.Adapter<CountryAdapter.CountryViewHolder> {
     var countries: MutableList<Country>
@@ -22,26 +23,33 @@ class CountryAdapter : RecyclerView.Adapter<CountryAdapter.CountryViewHolder> {
         notifyDataSetChanged()
     }
 
-    class CountryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class CountryViewHolder  : RecyclerView.ViewHolder  {
+        var  countryItemBinding: CountryItemBinding
+     constructor(countryItemBinding: CountryItemBinding): super(countryItemBinding.root){
 
-        var name: TextView = itemView.findViewById(R.id.tvCountryName)
-        var capital: TextView = itemView.findViewById(R.id.tvCapital)
-
+         this.countryItemBinding=countryItemBinding
+     }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CountryViewHolder {
-        return CountryViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.country_item, parent, false)
+//        return CountryViewHolder(
+//            LayoutInflater.from(parent.context).inflate(R.layout.country_item, parent, false)
+//        )
+        val countryItemBinding: CountryItemBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.getContext()),
+            R.layout.country_item, parent, false
         )
+        return CountryViewHolder(countryItemBinding)
     }
 
 
     override fun onBindViewHolder(holder: CountryViewHolder, position: Int) {
         println(countries.size)
         val country = countries[position]
-        holder.name.text = country.name
-        holder.capital.text = country.capital
+        holder.countryItemBinding.country=country
+//        holder.name.text = country.name
+//        holder.capital.text = country.capital
 
     }
 

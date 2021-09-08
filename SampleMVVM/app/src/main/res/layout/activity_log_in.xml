@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+ >
+    <data>
+        <import type="android.view.View"></import>
+        <variable
+            name="logInViewModel"
+            type="com.example.samplemvvm.viewModel.LogInViewModel" />
+    </data>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -17,6 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
+                android:text="@={logInViewModel.email}"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:importantForAutofill="no" />
@@ -29,6 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="15dp"
+                    android:text="@={logInViewModel.password}"
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     android:importantForAutofill="no" />
@@ -39,13 +47,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
+                android:visibility="@{logInViewModel.isProcessing?View.GONE:View.VISIBLE}"
+                android:onClick="@{(v)->logInViewModel.logIn(v)}"
                 android:text="@string/log_in" />
             <ProgressBar
                 android:id="@+id/progressBar"
-                android:visibility="gone"
+                android:visibility="@{logInViewModel.isProcessing?View.VISIBLE:View.GONE}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
             </ProgressBar>
+
         </LinearLayout>
 </layout>

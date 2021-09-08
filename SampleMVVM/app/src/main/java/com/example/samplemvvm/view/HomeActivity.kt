@@ -2,15 +2,10 @@ package com.example.samplemvvm.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.samplemvvm.CountryApplication
 import com.example.samplemvvm.R
 import com.example.samplemvvm.databinding.ActivityHomeBinding
@@ -25,7 +20,7 @@ class HomeActivity : AppCompatActivity() {
 
     @Inject
     lateinit var countryViewModel: CountryViewModel
-
+    lateinit var recycleView: RecyclerView
     private lateinit var binding: ActivityHomeBinding
     lateinit var adapter: CountryAdapter
     lateinit var countries: MutableList<Country>
@@ -40,27 +35,27 @@ class HomeActivity : AppCompatActivity() {
         val appComponent = (application as CountryApplication).appComponent
         appComponent.inject(this)
 
+        binding.lifecycleOwner = this
+        binding.logInViewModel = logInViewModel
+        binding.countryViewModel = countryViewModel
+        recycleView = binding.rvCountriesList
 
-        binding.rvCountriesList.visibility = View.GONE
-        binding.progressBar.visibility = View.VISIBLE
-
-        val linearLayoutManager = LinearLayoutManager(this)
-        binding.rvCountriesList.layoutManager = linearLayoutManager
 
         countries = mutableListOf()
         adapter = CountryAdapter(countries)
-        binding.rvCountriesList.adapter = adapter
+        recycleView.adapter = adapter
         authentication()
-        setListener()
+
 
         countryViewModel.fetchData()
         countryViewModel.getCountries().observe(this, {
             if (it != null) {
                 println("get data")
-                onSuccessful(it)
+                onSuccessful(it as MutableList<Country>)
             } else {
                 onError()
             }
+
         })
 
     }
@@ -75,34 +70,16 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
-
     }
 
-    private fun setListener() {
-        binding.btnLogout.setOnClickListener {
-            logInViewModel.logOut()
-        }
-
-        binding.edtSearch.addTextChangedListener(countryViewModel.search(adapter))
-
-    }
 
     private fun onSuccessful(result: MutableList<Country>) {
-        binding.rvCountriesList.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.GONE
-        binding.edtSearch.isEnabled = true
-
         countries = result
         adapter.updateCountries(countries)
-        binding.rvCountriesList.adapter = adapter
+        recycleView.adapter = adapter
     }
 
     private fun onError() {
-        binding.rvCountriesList.visibility = View.GONE
-        binding.progressBar.visibility = View.GONE
-        binding.edtSearch.isEnabled = false
-        binding.tvNoData.visibility = View.VISIBLE
-
         Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
     }
 
